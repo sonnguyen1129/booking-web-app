@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="content">
     <b-row>
       <b-col offset="4" xl="4">
         <b-form @submit.prevent="onSubmit" @reset="onReset">
@@ -36,10 +36,11 @@
 
 <script lang="ts">
 /* eslint-disable */
-import { Component, Vue } from "vue-property-decorator";
-import { UserDto } from "@/models/UserDto.ts";
-import { authService } from "@/services/auth-service.ts";
-import { AxiosResponse } from "axios";
+import { Component, Vue } from 'vue-property-decorator'
+import { UserDto } from '@/models/UserDto.ts';
+import { authService } from '@/services/auth-service.ts'
+import { userService } from '@/services/user-service.ts'
+import { AxiosResponse, AxiosPromise } from 'axios';
 
 @Component({
   components: {
@@ -47,8 +48,8 @@ import { AxiosResponse } from "axios";
 })
 export default class Login extends Vue {
     private userInput: UserDto = new UserDto();
-    private checkLogin: boolean = false;
     private loginFailMsg: boolean = false;
+    private isAdmin: boolean = false;
 
     private mounted() {
       
@@ -58,21 +59,42 @@ export default class Login extends Vue {
       authService.login(this.userInput)
       .then((res: any) => {
         if (res.status === 200) {
-          this.checkLogin = true;
+          this.loginFailMsg = false;
+          this.redirectPage();
         }
-        this.redirectPage();
       })
       .catch((error: any) => {
-        this.checkLogin = false;
         this.loginFailMsg = true;
       })
     }
 
     private redirectPage() {
-      if (this.checkLogin) {
-        this.$router.push('home');
-        this.loginFailMsg = false;
-      }
+      this.getCurrentUser()
+      .then(() => {
+        if (this.isAdmin) {
+          this.$router.push('admin-home');
+        }
+        else {
+          this.$router.push('home');
+        }
+      })
+      
+    }
+
+    private getCurrentUser(): Promise<any> {
+      return new Promise((resolve, reject) => {
+        let temp: any = localStorage.getItem('userId') ? localStorage.getItem('userId') : '';
+        userService.getUserById(temp)
+        .then((res: any) => {
+          if (res.data.role === 'USER') {
+            this.isAdmin = false;
+          }
+          else {
+            this.isAdmin = true;
+          }
+        })
+        .finally(() => resolve(true))
+      })
     }
 
     private onReset() {

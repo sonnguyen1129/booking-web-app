@@ -24,7 +24,7 @@ import {  AxiosResponse } from 'axios';
 @Component({
   components: {}
 })
-export default class Profile extends Vue {
+export default class BookedResource extends Vue {
   private user: UserDto = new UserDto();
   private token: any = '';
 

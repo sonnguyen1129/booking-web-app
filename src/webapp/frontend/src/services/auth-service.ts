@@ -12,7 +12,9 @@ class AuthService extends Vue {
     .then((res: any) => {
       // console.log(res)
       if (res.status === 200) {
-        localStorage.setItem('auth', JSON.stringify(res.data));
+        localStorage.setItem('token', JSON.stringify(res.data.token));
+        localStorage.setItem('userId', JSON.stringify(res.data.id));
+        localStorage.setItem('role', JSON.stringify(res.data.role));
         EventBus.$emit('logged', 'User logged');
       }
       return res;
@@ -20,7 +22,9 @@ class AuthService extends Vue {
   }
 
   public logout() {
-    localStorage.removeItem('auth');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('role');
     EventBus.$emit('logout', 'User log out');
   }
 

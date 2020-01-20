@@ -6,10 +6,9 @@
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
     <b-collapse id="nav-collapse" is-nav>
-      <b-navbar-nav>
+      <b-navbar-nav v-if="isLogged">
         <b-nav-item to="list-room">Room</b-nav-item>
-        <b-nav-item to="list1">List 1</b-nav-item>
-        <b-nav-item to="list2">List 2</b-nav-item>
+        <b-nav-item to="list-resource">List 1</b-nav-item>
       </b-navbar-nav>
 
       <!-- Right aligned nav items -->
@@ -26,6 +25,7 @@
             <em>{{currentUser.username}}</em>
           </template>
           <b-dropdown-item to="/profile">Profile</b-dropdown-item>
+          <b-dropdown-item to="/booked-resource">Booked Resource</b-dropdown-item>
           <b-dropdown-item @click="logout">Sign Out</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
@@ -53,28 +53,28 @@ export default class Navbar extends Vue {
   private currentUser: UserDto = new UserDto();
 
   private created() {
-    if (localStorage.getItem('auth')) {
+
+    if (localStorage.getItem('token') && localStorage.getItem('userId')) {
       this.getCurrentUser();
     }
+
     EventBus.$on('logged', () => {
       this.getCurrentUser();
     })
-    // this.currentUser = localStorage.getItem('auth');
+
     EventBus.$on('logout', () => {
       this.isLogged = false;
     })
+
   }
 
   private getCurrentUser() {
-    let json: any = localStorage.getItem('auth') ? localStorage.getItem('auth') : '';
-    let info: any | null = JSON.parse(json);
-    if (info) {
-      this.$set(this.currentUser, 'username', info.username);
-      this.isLogged = true;
-    }
-    else {
-      this.isLogged = false;
-    }
+      let temp: any = localStorage.getItem('userId') ? localStorage.getItem('userId') : '';
+      userService.getUserById(temp)
+      .then((res: any) => {
+        this.isLogged = true;
+        this.$set(this.currentUser, 'username', res.data.username);
+      })
   }
 
   private logout() {

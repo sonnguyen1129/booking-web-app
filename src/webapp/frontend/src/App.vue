@@ -18,7 +18,7 @@ import Navbar from '@/views/Navbar.vue'
 export default class App extends Vue {
   private isLogined: boolean = false;
   private created() {
-    if (localStorage.getItem('auth')) {
+    if (localStorage.getItem('token') && localStorage.getItem('userId')) {
       this.isLogined = true;
     }
   }

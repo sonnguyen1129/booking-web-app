@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 
 Vue.use(Router)
-
+/* eslint-disable */
 export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
@@ -39,6 +39,40 @@ export default new Router({
       path: '/profile',
       name: 'profile',
       component: () => import('./views/Profile.vue')
-    }
+    },
+    {
+      path: '/booked-resource',
+      name: 'booked-resource',
+      component: () => import('./views/BookedResource.vue')
+    },
+    {
+      path: '/list-room',
+      name: 'list-room',
+      component: () => import('./views/ListRoom.vue')
+    },
+    {
+      path: '/list-resource',
+      name: 'list-resource',
+      component: () => import('./views/ListResource.vue')
+    },
+    {
+      path: '/room-detail',
+      name: 'room-detail',
+      props: (route) => ({
+        id: route.query.id
+      }),
+      component: () => import('./views/RoomDetail.vue')
+    },
+
+
+    // admin
+    {
+      path: '/admin-home',
+      name: 'admin-home',
+      props: (route) => ({
+        id: route.query.id
+      }),
+      component: () => import('./views/admin/HomeAdmin.vue')
+    },
   ]
 })

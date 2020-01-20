@@ -21,7 +21,6 @@ import VueI18n from 'vue-i18n'
 import EventBus from './EventBus'
 
 Vue.prototype.moment = moment
-
 Vue.prototype.$bus = EventBus
 
 Vue.use(BootstrapVue)
